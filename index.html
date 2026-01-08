@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CipherX AI | Intelligent Conversational Protocol</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00E5FF;
+            --neon-green: #39FF14;
+            --neon-pink: #FF007F;
+            --neon-purple: #BC13FE;
+            --deep-blue: #00B0FF;
+            --void-bg: #020203;
+            --surface-bg: #0a0a0c;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--void-bg);
+            color: #f8fafc;
+            overflow: hidden;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .glow-blue { box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); }
+        .glow-green { box-shadow: 0 0 20px rgba(57, 255, 20, 0.4); }
+        .glow-pink { box-shadow: 0 0 20px rgba(255, 0, 127, 0.4); }
+        
+        .text-glow-blue { text-shadow: 0 0 10px rgba(0, 229, 255, 0.7); }
+        .text-glow-green { text-shadow: 0 0 10px rgba(57, 255, 20, 0.7); }
+        .text-glow-pink { text-shadow: 0 0 10px rgba(255, 0, 127, 0.7); }
+
+        .glass {
+            background: rgba(10, 10, 12, 0.85);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .cyber-grid {
+            background-image: 
+                linear-gradient(rgba(0, 229, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        .cyber-grid::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, transparent 0%, var(--void-bg) 95%);
+            pointer-events: none;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(57, 255, 20, 0.02), rgba(255, 0, 127, 0.02), transparent);
+            animation: scanline 8s linear infinite;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        .cyber-corners {
+            position: relative;
+        }
+        .cyber-corners::before, .cyber-corners::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            pointer-events: none;
+        }
+        .cyber-corners::before {
+            top: -1px;
+            left: -1px;
+            border-top: 2.5px solid var(--neon-blue);
+            border-left: 2.5px solid var(--neon-green);
+        }
+        .cyber-corners::after {
+            bottom: -1px;
+            right: -1px;
+            border-bottom: 2.5px solid var(--neon-pink);
+            border-right: 2.5px solid var(--neon-purple);
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--void-bg); }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Typing cursor animation */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .typing-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 18px;
+            background-color: var(--neon-blue);
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: blink 0.8s infinite;
+        }
+        
+        .streaming-text {
+          transition: all 0.2s ease-out;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "recharts": "https://esm.sh/recharts@^3.6.0",
+    "jspdf": "https://esm.sh/jspdf@^2.5.1"
+  }
+}
+</script>
+</head>
+<body class="cyber-grid relative min-h-screen">
+    <div class="noise"></div>
+    <div id="root"></div>
+    <script type="module" src="index.tsx"></script>
+</body>
+</html>

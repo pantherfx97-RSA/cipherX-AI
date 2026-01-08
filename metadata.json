@@ -1,0 +1,8 @@
+{
+  "name": "Copy of CipherX AI DEPLOY",
+  "description": "A high-security, conversational AI platform with cybersecurity aesthetics, offering task automation, secure vaults, and premium AI capabilities.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
