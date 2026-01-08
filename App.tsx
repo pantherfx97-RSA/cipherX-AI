@@ -41,6 +41,9 @@ const App: React.FC = () => {
   const [selectedTask, setSelectedTask] = useState<TaskTemplate | null>(null);
   const [taskData, setTaskData] = useState<Record<string, string>>({});
   const [isInitializingTask, setIsInitializingTask] = useState(false);
+  const [theme, setTheme] = useState<'dark' | 'light'>(
+    (localStorage.getItem('cipherx_theme') as 'dark' | 'light') || 'dark'
+  );
 
   const aiServiceRef = useRef<GeminiService>(new GeminiService());
 
@@ -64,7 +67,6 @@ const App: React.FC = () => {
     if (storedUser) {
       setUser(storedUser);
       setSessions(storageService.getSessions());
-      // Only set to dashboard if they were in a different state or starting fresh
       if (view === AppView.LANDING) setView(AppView.DASHBOARD);
     }
   }, []);
@@ -74,6 +76,18 @@ const App: React.FC = () => {
       storageService.saveSessions(sessions);
     }
   }, [sessions]);
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (theme === 'dark') {
+      root.classList.remove('light-mode');
+      root.classList.add('dark');
+    } else {
+      root.classList.add('light-mode');
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('cipherx_theme', theme);
+  }, [theme]);
 
   const addNotification = (text: string) => {
     const id = Math.random().toString(36).substr(2, 9);
@@ -142,6 +156,10 @@ const App: React.FC = () => {
     setView(newView);
   };
 
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
+
   const currentSession = sessions.find(s => s.id === currentSessionId);
 
   const renderContent = () => {
@@ -181,9 +199,9 @@ const App: React.FC = () => {
                       <div key={field.id} className="space-y-3">
                         <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">>> {field.label}</label>
                         {field.type === 'text' ? (
-                          <input type="text" placeholder={field.placeholder} value={taskData[field.id] || ''} onChange={(e) => setTaskData({...taskData, [field.id]: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-[#00E5FF] transition-all font-mono text-white placeholder-slate-800" />
+                          <input type="text" placeholder={field.placeholder} value={taskData[field.id] || ''} onChange={(e) => setTaskData({...taskData, [field.id]: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-[#00E5FF] transition-all font-mono dark:text-white text-slate-900 placeholder-slate-800" />
                         ) : (
-                          <textarea placeholder={field.placeholder} rows={5} value={taskData[field.id] || ''} onChange={(e) => setTaskData({...taskData, [field.id]: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-[#00E5FF] transition-all font-mono text-white placeholder-slate-800 resize-none" />
+                          <textarea placeholder={field.placeholder} rows={5} value={taskData[field.id] || ''} onChange={(e) => setTaskData({...taskData, [field.id]: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-[#00E5FF] transition-all font-mono dark:text-white text-slate-900 placeholder-slate-800 resize-none" />
                         )}
                       </div>
                     ))}
@@ -208,7 +226,7 @@ const App: React.FC = () => {
                   {TASK_TEMPLATES.map(task => (
                     <button key={task.id} onClick={() => setSelectedTask(task)} className="glass p-6 md:p-10 rounded-[2.5rem] hover:border-[#00E5FF]/50 transition-all text-left group border-white/5 relative overflow-hidden shadow-2xl">
                       <Zap className="text-[#00E5FF] mb-6" size={32} />
-                      <h3 className="text-xl md:text-2xl font-bold mb-3 font-mono text-white group-hover:text-[#00E5FF] transition-colors">{task.label}</h3>
+                      <h3 className="text-xl md:text-2xl font-bold mb-3 font-mono dark:text-white text-slate-900 group-hover:text-[#00E5FF] transition-colors">{task.label}</h3>
                       <p className="text-slate-400 text-xs leading-relaxed mb-8">{task.description}</p>
                       <div className="flex items-center gap-2 text-[9px] font-mono font-bold text-slate-500 group-hover:text-[#00E5FF] transition-colors uppercase tracking-widest">DEPLOY_SEQUENCE <ChevronRight size={14} /></div>
                     </button>
@@ -218,7 +236,7 @@ const App: React.FC = () => {
             )}
           </div>
         );
-      case AppView.SETTINGS: return <SettingsView user={user} setUser={setUser} handleLogout={handleLogout} addNotification={addNotification} onBack={() => setView(AppView.DASHBOARD)} />;
+      case AppView.SETTINGS: return <SettingsView user={user} setUser={setUser} handleLogout={handleLogout} addNotification={addNotification} onBack={() => setView(AppView.DASHBOARD)} theme={theme} toggleTheme={toggleTheme} />;
       case AppView.DASHBOARD: return <Dashboard user={user} sessions={sessions} onNavigate={(v) => setView(v)} />;
       case AppView.VAULT: return <Vault user={user} setUser={setUser} onBack={() => setView(AppView.DASHBOARD)} />;
       case AppView.SECURITY_ACTIVITY: return <SecurityActivity user={user} onBack={() => setView(AppView.DASHBOARD)} />;
@@ -231,7 +249,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen w-full bg-black text-white overflow-hidden selection:bg-[#00E5FF]/30 selection:text-[#00E5FF]">
+    <div className={`flex h-screen w-full transition-colors duration-300 overflow-hidden selection:bg-[#00E5FF]/30 selection:text-[#00E5FF] ${theme === 'dark' ? 'bg-black text-white' : 'bg-slate-50 text-slate-900'}`}>
       <div className="fixed top-4 md:top-6 right-4 md:right-6 z-[100] flex flex-col gap-3 max-w-[80vw]">
         {notifications.map(n => (
           <div key={n.id} className="glass border border-[#00E5FF]/30 text-[#00E5FF] px-4 md:px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-right-8 duration-500">
@@ -269,7 +287,7 @@ const App: React.FC = () => {
         </>
       )}
 
-      <main className="flex-1 flex flex-col relative overflow-hidden bg-black">
+      <main className="flex-1 flex flex-col relative overflow-hidden">
         {user && (
           <header className="h-16 border-b border-white/10 flex items-center justify-between px-4 md:px-8 glass z-20">
             <div className="flex items-center gap-4">
@@ -295,13 +313,13 @@ const App: React.FC = () => {
                   </span>
                 </div>
               )}
-              <button onClick={() => handleViewChange(AppView.SETTINGS)} className="w-9 h-9 md:w-10 md:h-10 rounded-2xl border border-white/10 bg-slate-900 flex items-center justify-center hover:border-[#00E5FF] transition-all">
+              <button onClick={() => handleViewChange(AppView.SETTINGS)} className="w-9 h-9 md:w-10 md:h-10 rounded-2xl border border-white/10 dark:bg-slate-900 bg-white flex items-center justify-center hover:border-[#00E5FF] transition-all shadow-sm">
                 <UserIcon size={18} className="text-slate-400" />
               </button>
             </div>
           </header>
         )}
-        <div className="flex-1 overflow-hidden relative bg-black">
+        <div className="flex-1 overflow-hidden relative">
           {renderContent()}
         </div>
       </main>

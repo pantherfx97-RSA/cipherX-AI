@@ -41,7 +41,8 @@ export class GeminiService {
   constructor() {}
 
   async streamChat(modelName: string, prompt: string, history: any[] = []) {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+    // Initializing Gemini client as per coding guidelines
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const enhancedInstruction = `${SYSTEM_PROMPT}\n\nCRITICAL_PROTOCOL: Always prepend your response with a detailed step-by-step reasoning path enclosed in <thought> tags. After the closing tag </thought>, provide your final answer. The thought section should break down how you analyzed the user's intent, the data provided, and the logic used for the response.`;
 
     const responseStream = await ai.models.generateContentStream({
@@ -72,7 +73,8 @@ export class GeminiService {
     }
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+      // Initializing Gemini client as per coding guidelines
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
       const cleanText = text
         .replace(/<thought>[\s\S]*?<\/thought>/g, '')
@@ -119,7 +121,8 @@ export class GeminiService {
   }
 
   async analyzeImage(imageData: string, prompt: string) {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY as string });
+    // Initializing Gemini client as per coding guidelines
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
       contents: {

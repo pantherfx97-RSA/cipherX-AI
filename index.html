@@ -7,6 +7,28 @@
     <title>CipherX AI | Intelligent Conversational Protocol</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              cyber: {
+                blue: '#00E5FF',
+                green: '#39FF14',
+                pink: '#FF007F',
+                purple: '#BC13FE',
+              }
+            },
+            boxShadow: {
+              'neon-blue': '0 0 15px rgba(0, 229, 255, 0.5), 0 0 30px rgba(0, 229, 255, 0.2)',
+              'neon-green': '0 0 15px rgba(57, 255, 20, 0.5), 0 0 30px rgba(57, 255, 20, 0.2)',
+              'neon-pink': '0 0 15px rgba(255, 0, 127, 0.5), 0 0 30px rgba(255, 0, 127, 0.2)',
+            }
+          }
+        }
+      }
+    </script>
     <style>
         :root {
             --neon-blue: #00E5FF;
@@ -16,34 +38,49 @@
             --deep-blue: #00B0FF;
             --void-bg: #020203;
             --surface-bg: #0a0a0c;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.12);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+
+        .light-mode {
+            --void-bg: #f8fafc;
+            --surface-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--void-bg);
-            color: #f8fafc;
+            color: var(--text-main);
             overflow: hidden;
         }
         .font-mono {
             font-family: 'JetBrains Mono', monospace;
         }
+        
+        /* High-Visibility Neon Glows */
         .glow-blue { box-shadow: 0 0 20px rgba(0, 229, 255, 0.4); }
         .glow-green { box-shadow: 0 0 20px rgba(57, 255, 20, 0.4); }
         .glow-pink { box-shadow: 0 0 20px rgba(255, 0, 127, 0.4); }
         
-        .text-glow-blue { text-shadow: 0 0 10px rgba(0, 229, 255, 0.7); }
-        .text-glow-green { text-shadow: 0 0 10px rgba(57, 255, 20, 0.7); }
-        .text-glow-pink { text-shadow: 0 0 10px rgba(255, 0, 127, 0.7); }
+        .text-glow-blue { text-shadow: 0 0 12px rgba(0, 229, 255, 0.8); }
+        .text-glow-green { text-shadow: 0 0 12px rgba(57, 255, 20, 0.8); }
+        .text-glow-pink { text-shadow: 0 0 12px rgba(255, 0, 127, 0.8); }
 
         .glass {
-            background: rgba(10, 10, 12, 0.85);
+            background: var(--surface-bg);
             backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
         }
         
         .cyber-grid {
             background-image: 
-                linear-gradient(rgba(0, 229, 255, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 229, 255, 0.04) 1px, transparent 1px);
+                linear-gradient(rgba(0, 229, 255, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 229, 255, 0.06) 1px, transparent 1px);
             background-size: 60px 60px;
         }
         .cyber-grid::after {
@@ -64,7 +101,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, transparent, rgba(57, 255, 20, 0.02), rgba(255, 0, 127, 0.02), transparent);
+            background: linear-gradient(to bottom, transparent, rgba(57, 255, 20, 0.03), rgba(255, 0, 127, 0.03), transparent);
             animation: scanline 8s linear infinite;
             pointer-events: none;
             z-index: 50;
@@ -76,28 +113,30 @@
         .cyber-corners::before, .cyber-corners::after {
             content: '';
             position: absolute;
-            width: 15px;
-            height: 15px;
+            width: 20px;
+            height: 20px;
             pointer-events: none;
+            z-index: 10;
         }
         .cyber-corners::before {
-            top: -1px;
-            left: -1px;
-            border-top: 2.5px solid var(--neon-blue);
-            border-left: 2.5px solid var(--neon-green);
+            top: -2px;
+            left: -2px;
+            border-top: 3px solid var(--neon-blue);
+            border-left: 3px solid var(--neon-green);
         }
         .cyber-corners::after {
-            bottom: -1px;
-            right: -1px;
-            border-bottom: 2.5px solid var(--neon-pink);
-            border-right: 2.5px solid var(--neon-purple);
+            bottom: -2px;
+            right: -2px;
+            border-bottom: 3px solid var(--neon-pink);
+            border-right: 3px solid var(--neon-purple);
         }
 
-        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--void-bg); }
         ::-webkit-scrollbar-thumb {
-            background: #27272a;
+            background: var(--neon-blue);
             border-radius: 10px;
+            box-shadow: 0 0 5px var(--neon-blue);
         }
         ::-webkit-scrollbar-thumb:hover { background: var(--neon-green); }
 
@@ -108,28 +147,51 @@
             width: 100%;
             height: 100%;
             background: url('https://grainy-gradients.vercel.app/noise.svg');
-            opacity: 0.04;
+            opacity: 0.05;
             pointer-events: none;
             z-index: 100;
         }
 
-        /* Typing cursor animation */
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
         }
         .typing-cursor {
             display: inline-block;
-            width: 8px;
-            height: 18px;
+            width: 10px;
+            height: 20px;
             background-color: var(--neon-blue);
-            margin-left: 2px;
+            margin-left: 4px;
             vertical-align: middle;
             animation: blink 0.8s infinite;
+            box-shadow: 0 0 8px var(--neon-blue);
         }
         
         .streaming-text {
           transition: all 0.2s ease-out;
+        }
+
+        /* Visible buttons refinement */
+        .btn-neon-green {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.6);
+            transition: all 0.3s ease;
+        }
+        .btn-neon-green:hover {
+            box-shadow: 0 0 25px rgba(57, 255, 20, 0.8);
+            transform: scale(1.02);
+        }
+
+        .btn-neon-blue {
+            background: var(--neon-blue);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
+            transition: all 0.3s ease;
+        }
+        .btn-neon-blue:hover {
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.8);
+            transform: scale(1.02);
         }
     </style>
 <script type="importmap">
@@ -146,8 +208,9 @@
 }
 </script>
 </head>
-<body class="cyber-grid relative min-h-screen">
+<body class="cyber-grid relative min-h-screen selection:bg-cyber-blue selection:text-black">
     <div class="noise"></div>
+    <div class="scanline"></div>
     <div id="root"></div>
     <script type="module" src="index.tsx"></script>
 </body>

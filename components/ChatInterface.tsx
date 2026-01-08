@@ -15,20 +15,6 @@ import { GeminiService } from '../services/geminiService';
 import { storageService } from '../services/storageService';
 import { generateSessionPDF } from '../services/pdfService';
 
-interface ChatInterfaceProps {
-  user: User;
-  setUser: (u: User) => void;
-  session: ChatSession | undefined;
-  sessions: ChatSession[];
-  setSessions: React.Dispatch<React.SetStateAction<ChatSession[]>>;
-  aiService: GeminiService | null;
-  onShowPaywall: () => void;
-  onNewChat: () => void;
-  addNotification: (t: string) => void;
-  isMobile?: boolean;
-  onNavigate: (v: AppView) => void;
-}
-
 const TypingCursor: React.FC = () => <span className="typing-cursor" />;
 
 const ReasoningSection: React.FC<{ thought: string }> = ({ thought }) => {
@@ -36,31 +22,46 @@ const ReasoningSection: React.FC<{ thought: string }> = ({ thought }) => {
   if (!thought) return null;
 
   return (
-    <div className="mb-4 md:mb-5 border border-[#39FF14]/20 rounded-xl bg-black/40 overflow-hidden transition-all duration-300">
+    <div className="mb-4 md:mb-6 border-2 border-[#39FF14]/30 rounded-2xl bg-black/60 overflow-hidden transition-all duration-300">
       <button 
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-4 py-2.5 text-left hover:bg-white/5 transition-colors border-b border-white/5"
+        className="w-full flex items-center justify-between px-5 py-3.5 text-left hover:bg-cyber-green/10 transition-colors border-b-2 border-[#39FF14]/10"
       >
         <div className="flex items-center gap-3">
-          <ListChecks size={14} className="text-[#39FF14]" />
-          <span className="text-[10px] font-mono font-bold text-[#39FF14] uppercase tracking-widest">Reasoning_Path 🧠</span>
+          <ListChecks size={18} className="text-[#39FF14] drop-shadow-[0_0_5px_rgba(57,255,20,0.5)]" />
+          <span className="text-[11px] font-mono font-black text-[#39FF14] uppercase tracking-[0.2em] text-glow-green">Reasoning_Path 🧠</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[8px] font-mono font-bold text-slate-500 uppercase tracking-tighter">
+          <span className="text-[9px] font-mono font-black text-slate-500 uppercase tracking-tighter">
             {isExpanded ? 'Collapse' : 'Expand'}
           </span>
-          {isExpanded ? <ChevronUp size={14} className="text-slate-500" /> : <ChevronDown size={14} className="text-slate-500" />}
+          {isExpanded ? <ChevronUp size={16} className="text-slate-500" /> : <ChevronDown size={16} className="text-slate-500" />}
         </div>
       </button>
       
       {isExpanded && (
-        <div className="px-4 py-4 bg-black/60 font-mono text-[11px] leading-relaxed text-slate-300 border-t border-white/5 animate-in slide-in-from-top-1">
-          <div className="whitespace-pre-wrap pl-2 border-l-2 border-[#39FF14]/40">{thought.trim()}</div>
+        <div className="px-6 py-5 bg-black/80 font-mono text-[12px] leading-relaxed text-[#39FF14]/80 border-t border-white/5 animate-in slide-in-from-top-1">
+          <div className="whitespace-pre-wrap pl-4 border-l-4 border-[#39FF14]/50 shadow-[inset_10px_0_15px_-10px_rgba(57,255,20,0.3)]">{thought.trim()}</div>
         </div>
       )}
     </div>
   );
 };
+
+// Added ChatInterfaceProps interface definition to fix line 51 error
+interface ChatInterfaceProps {
+  user: User;
+  setUser: (u: User) => void;
+  session: ChatSession | undefined;
+  sessions: ChatSession[];
+  setSessions: React.Dispatch<React.SetStateAction<ChatSession[]>>;
+  aiService: GeminiService;
+  onShowPaywall: () => void;
+  onNewChat: () => void;
+  addNotification: (t: string) => void;
+  isMobile: boolean;
+  onNavigate: (v: AppView) => void;
+}
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ 
   user, setUser, session, sessions, setSessions, aiService, 
@@ -251,15 +252,16 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   if (session?.isSecret && user.lockSecretChats && !isUnlocked) {
     if (!user.vaultPin) {
       return (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 bg-black text-center">
-          <ShieldAlert className="text-[#FF007F] mb-6" size={48} />
-          <h2 className="text-xl font-bold font-mono text-white mb-4 uppercase tracking-tighter">SECURITY_PROTOCOL_REQUIRED</h2>
-          <p className="text-slate-400 text-sm max-w-sm mb-8 font-mono">
+        <div className="flex-1 flex flex-col items-center justify-center p-8 bg-black text-center relative overflow-hidden h-full">
+          <div className="absolute inset-0 cyber-grid opacity-20"></div>
+          <ShieldAlert className="text-[#FF007F] mb-6 drop-shadow-[0_0_15px_rgba(255,0,127,0.5)]" size={64} />
+          <h2 className="text-2xl font-black font-mono text-white mb-4 uppercase tracking-[0.2em] text-glow-pink">SECURITY_PROTOCOL_REQUIRED</h2>
+          <p className="text-slate-400 text-sm max-w-sm mb-10 font-mono leading-relaxed uppercase tracking-wider">
             Please establish a custom access code in the <b>Security Vault</b> to unlock and protect private sessions.
           </p>
           <button 
             onClick={() => onNavigate(AppView.VAULT)}
-            className="px-8 py-3 bg-[#FF007F] text-white rounded-xl font-black uppercase text-xs tracking-widest font-mono shadow-lg shadow-pink-500/20 active:scale-95 transition-all"
+            className="px-10 py-4 bg-[#FF007F] text-white rounded-2xl font-black uppercase text-xs tracking-[0.3em] font-mono shadow-[0_0_25px_rgba(255,0,127,0.4)] active:scale-95 hover:scale-105 transition-all"
           >
             GO_TO_VAULT
           </button>
@@ -268,12 +270,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
 
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-black relative">
-        <div className="w-16 h-16 md:w-20 md:h-20 bg-[#FF007F]/5 border border-[#FF007F] rounded-2xl flex items-center justify-center mb-10 shadow-[0_0_20px_rgba(255,0,127,0.3)] animate-pulse"><Lock className="text-[#FF007F]" size={36} /></div>
-        <h2 className="text-lg md:text-xl font-bold font-mono text-[#FF007F] tracking-widest uppercase text-glow-pink text-center">SESSION_LOCKED 🔒</h2>
-        <form onSubmit={handleUnlock} className="w-full max-w-xs space-y-6 mt-8">
-          <input type="password" value={pinInput} onChange={(e) => setPinInput(e.target.value)} className="w-full bg-slate-900/80 border border-slate-800 text-center text-2xl tracking-[0.5em] py-5 rounded-2xl focus:outline-none focus:border-[#FF007F] text-white font-mono" maxLength={8} placeholder="****" autoFocus />
-          <button type="submit" className="w-full bg-[#FF007F] text-white py-4 rounded-2xl font-bold uppercase tracking-widest text-xs font-mono">Unlock_Access</button>
+      <div className="flex-1 flex flex-col items-center justify-center p-8 bg-black relative h-full overflow-hidden">
+        <div className="absolute inset-0 cyber-grid opacity-20"></div>
+        <div className="w-20 h-20 md:w-24 md:h-24 bg-[#FF007F]/10 border-2 border-[#FF007F] rounded-[2.5rem] flex items-center justify-center mb-10 shadow-[0_0_40px_rgba(255,0,127,0.4)] animate-pulse relative z-10"><Lock className="text-[#FF007F]" size={42} /></div>
+        <h2 className="text-xl md:text-2xl font-black font-mono text-[#FF007F] tracking-[0.3em] uppercase text-glow-pink text-center relative z-10">SESSION_LOCKED 🔒</h2>
+        <form onSubmit={handleUnlock} className="w-full max-w-xs space-y-8 mt-10 relative z-10">
+          <input type="password" value={pinInput} onChange={(e) => setPinInput(e.target.value)} className="w-full bg-slate-900/60 border-2 border-[#FF007F]/40 text-center text-3xl tracking-[0.8em] py-6 rounded-3xl focus:outline-none focus:border-[#FF007F] text-white font-mono shadow-[inset_0_0_15px_rgba(255,0,127,0.1)]" maxLength={8} placeholder="****" autoFocus />
+          <button type="submit" className="w-full bg-[#FF007F] text-white py-5 rounded-3xl font-black uppercase tracking-[0.3em] text-xs font-mono shadow-[0_0_30px_rgba(255,0,127,0.3)] hover:scale-105 transition-all">Unlock_Access</button>
         </form>
       </div>
     );
@@ -284,190 +287,208 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   return (
     <div className="flex-1 flex flex-col h-full bg-black relative">
       {!session ? (
-        <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-8 text-center relative z-10">
-          <div className="w-16 h-16 md:w-20 md:h-20 bg-[#39FF14]/10 rounded-2xl flex items-center justify-center mb-8 border-2 border-[#39FF14] text-[#39FF14] animate-pulse glow-green"><Cpu size={32} /></div>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-mono tracking-widest text-white uppercase text-glow-green">System_Active 🤖</h2>
-          <p className="text-slate-500 text-[10px] md:text-xs max-w-md mb-12 font-mono uppercase tracking-widest">Select a module to begin.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 w-full max-w-2xl px-2">
-            <button onClick={() => onNewChat()} className="glass p-6 md:p-10 rounded-[2rem] border-[#39FF14]/20 hover:border-[#39FF14]/60 transition-all text-left group">
-              <Zap className="text-[#39FF14] mb-4" size={28} />
-              <h3 className="font-bold text-base md:text-lg text-white font-mono uppercase tracking-widest mb-1 group-hover:text-[#39FF14]">Standard_Chat 💬</h3>
-              <p className="text-[9px] text-slate-500 font-mono">FAST // EFFICIENT</p>
+        <div className="flex-1 flex flex-col items-center justify-center p-6 md:p-12 text-center relative z-10 h-full overflow-hidden">
+          <div className="absolute inset-0 cyber-grid opacity-30"></div>
+          <div className="w-20 h-20 md:w-28 md:h-28 bg-[#39FF14]/10 rounded-[2.5rem] flex items-center justify-center mb-10 border-4 border-[#39FF14] text-[#39FF14] animate-pulse glow-green shadow-[0_0_40px_rgba(57,255,20,0.3)]"><Cpu size={48} /></div>
+          <h2 className="text-3xl md:text-5xl font-black mb-6 font-mono tracking-[0.2em] text-white uppercase text-glow-green">System_Active 🤖</h2>
+          <p className="text-slate-400 text-xs md:text-sm max-w-lg mb-16 font-mono uppercase tracking-[0.3em] font-bold">Initializing conversational matrix. Select a protocol to begin transmission.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 w-full max-w-3xl px-4 relative z-20">
+            <button onClick={() => onNewChat()} className="glass p-8 md:p-12 rounded-[3rem] border-[#39FF14]/30 hover:border-[#39FF14] transition-all text-left group shadow-[0_0_20px_rgba(57,255,20,0.05)] hover:shadow-[0_0_40px_rgba(57,255,20,0.2)] hover:scale-[1.02]">
+              <Zap className="text-[#39FF14] mb-6 drop-shadow-[0_0_10px_rgba(57,255,20,0.6)]" size={36} />
+              <h3 className="font-black text-xl md:text-2xl text-white font-mono uppercase tracking-[0.2em] mb-2 group-hover:text-[#39FF14] transition-colors">Standard_Chat 💬</h3>
+              <p className="text-[10px] text-slate-500 font-mono font-black tracking-widest uppercase">FAST // EFFICIENT // RELIABLE</p>
             </button>
-            <button onClick={() => onNavigate(AppView.DASHBOARD)} className="glass p-6 md:p-10 rounded-[2rem] border-[#BC13FE]/20 hover:border-[#BC13FE]/60 transition-all text-left group">
-              <LayoutDashboard className="text-[#BC13FE] mb-4" size={28} />
-              <h3 className="font-bold text-base md:text-lg text-white font-mono uppercase tracking-widest mb-1 group-hover:text-[#BC13FE]">System_Monitor 📊</h3>
-              <p className="text-[9px] text-slate-500 font-mono">DASHBOARD // STATS</p>
+            <button onClick={() => onNavigate(AppView.DASHBOARD)} className="glass p-8 md:p-12 rounded-[3rem] border-[#BC13FE]/30 hover:border-[#BC13FE] transition-all text-left group shadow-[0_0_20px_rgba(188,19,254,0.05)] hover:shadow-[0_0_40px_rgba(188,19,254,0.2)] hover:scale-[1.02]">
+              <LayoutDashboard className="text-[#BC13FE] mb-6 drop-shadow-[0_0_10px_rgba(188,19,254,0.6)]" size={36} />
+              <h3 className="font-black text-xl md:text-2xl text-white font-mono uppercase tracking-[0.2em] mb-2 group-hover:text-[#BC13FE] transition-colors">System_Monitor 📊</h3>
+              <p className="text-[10px] text-slate-500 font-mono font-black tracking-widest uppercase">DASHBOARD // ANALYTICS // FLOW</p>
             </button>
           </div>
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between px-4 md:px-8 py-4 border-b border-white/10 glass backdrop-blur-3xl sticky top-0 z-20">
-            <div className="flex items-center gap-3 md:gap-6 min-w-0">
-              <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full shrink-0 ${isTyping ? 'bg-[#39FF14] animate-pulse glow-green' : 'bg-slate-800'}`} />
+          <div className="flex items-center justify-between px-5 md:px-10 py-5 border-b-2 border-white/10 glass backdrop-blur-3xl sticky top-0 z-30">
+            <div className="flex items-center gap-4 md:gap-8 min-w-0">
+              <div className={`w-3 h-3 md:w-4 md:h-4 rounded-full shrink-0 ${isTyping ? 'bg-[#39FF14] animate-pulse shadow-[0_0_12px_#39FF14]' : 'bg-slate-800 shadow-inner'}`} />
               <div className="min-w-0">
-                <h3 className="font-bold text-[10px] md:text-[11px] font-mono tracking-widest uppercase truncate text-white">{session.title}</h3>
-                {/* Model Selector Dropdown */}
-                <div className="relative mt-1">
+                <h3 className="font-black text-[12px] md:text-[14px] font-mono tracking-[0.15em] uppercase truncate text-white drop-shadow-sm">{session.title}</h3>
+                <div className="relative mt-2">
                   <button 
                     onClick={() => setShowModelDropdown(!showModelDropdown)}
-                    className="flex items-center gap-2 text-[8px] font-mono font-black text-[#39FF14] uppercase tracking-widest hover:opacity-80 transition-opacity"
+                    className={`flex items-center gap-2.5 text-[10px] font-mono font-black uppercase tracking-[0.2em] hover:opacity-100 transition-all ${currentModel === 'gemini-3-pro-preview' ? 'text-[#BC13FE] text-glow-pink' : 'text-[#39FF14] text-glow-green'}`}
                   >
-                    <Sparkle size={10} />
-                    {currentModel === 'gemini-3-pro-preview' ? 'Pro (Advanced) 🧠' : 'Standard (Fast) ⚡'}
-                    <ChevronDown size={10} className={`transition-transform ${showModelDropdown ? 'rotate-180' : ''}`} />
+                    <Sparkle size={12} className="animate-pulse" />
+                    {currentModel === 'gemini-3-pro-preview' ? 'Pro_Clearance (Advanced) 🧠' : 'Standard_Uplink (Fast) ⚡'}
+                    <ChevronDown size={12} className={`transition-transform duration-300 ${showModelDropdown ? 'rotate-180' : ''}`} />
                   </button>
                   
                   {showModelDropdown && (
-                    <div className="absolute top-full left-0 mt-2 w-56 glass border border-white/10 rounded-xl overflow-hidden z-30 shadow-2xl animate-in fade-in slide-in-from-top-2">
+                    <div className="absolute top-full left-0 mt-3 w-64 glass border-2 border-white/10 rounded-2xl overflow-hidden z-50 shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in fade-in slide-in-from-top-2">
                       <button 
                         onClick={() => handleModelChange('gemini-3-flash-preview')}
-                        className={`w-full text-left px-4 py-3 text-[10px] font-mono font-bold uppercase transition-colors flex items-center justify-between ${currentModel !== 'gemini-3-pro-preview' ? 'text-[#39FF14] bg-white/5' : 'text-slate-400 hover:bg-white/5'}`}
+                        className={`w-full text-left px-5 py-4 text-[11px] font-mono font-black uppercase transition-all flex items-center justify-between ${currentModel !== 'gemini-3-pro-preview' ? 'text-[#39FF14] bg-[#39FF14]/10' : 'text-slate-400 hover:bg-white/5'}`}
                       >
                         Standard (Fast) ⚡
-                        {currentModel !== 'gemini-3-pro-preview' && <Check size={12} />}
+                        {currentModel !== 'gemini-3-pro-preview' && <Check size={16} />}
                       </button>
                       <button 
                         onClick={() => handleModelChange('gemini-3-pro-preview')}
-                        className={`w-full text-left px-4 py-3 text-[10px] font-mono font-bold uppercase transition-colors flex items-center justify-between ${currentModel === 'gemini-3-pro-preview' ? 'text-[#BC13FE] bg-white/5' : 'text-slate-400 hover:bg-white/5'}`}
+                        className={`w-full text-left px-5 py-4 text-[11px] font-mono font-black uppercase transition-all flex items-center justify-between ${currentModel === 'gemini-3-pro-preview' ? 'text-[#BC13FE] bg-[#BC13FE]/10' : 'text-slate-400 hover:bg-white/5'}`}
                       >
-                        <span className="flex items-center gap-2">
-                          Pro (Advanced Reasoning) 🧠
-                          <span className="bg-[#BC13FE] text-white text-[7px] px-1.5 py-0.5 rounded-full font-black">PREMIUM</span>
+                        <span className="flex items-center gap-3">
+                          Pro (Advanced) 🧠
+                          <span className="bg-[#BC13FE] text-white text-[8px] px-2 py-0.5 rounded-full font-black shadow-[0_0_10px_#BC13FE]">PREMIUM</span>
                         </span>
-                        {currentModel === 'gemini-3-pro-preview' && <Check size={12} />}
+                        {currentModel === 'gemini-3-pro-preview' && <Check size={16} />}
                       </button>
                     </div>
                   )}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2 md:gap-4">
-              <div className="hidden md:flex items-center gap-2">
+            <div className="flex items-center gap-3 md:gap-5">
+              <div className="hidden md:flex items-center gap-3">
                 <button 
                   onClick={() => setAutoVoice(!autoVoice)} 
-                  className={`p-2.5 rounded-xl border transition-all ${autoVoice ? 'text-[#39FF14] border-[#39FF14]/60 bg-[#39FF14]/10' : 'text-slate-500 border-white/10'}`} 
+                  className={`p-3 rounded-2xl border-2 transition-all ${autoVoice ? 'text-[#39FF14] border-[#39FF14] bg-[#39FF14]/15 shadow-[0_0_15px_rgba(57,255,20,0.3)]' : 'text-slate-500 border-white/10 hover:border-slate-600'}`} 
                   title="Auto-Voice Feedback"
                 >
-                  <Volume2 size={18} />
+                  <Volume2 size={20} />
                 </button>
                 <button 
                   onClick={handleExportPDF} 
-                  className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:text-[#00E5FF] rounded-xl border border-white/10 text-slate-500 transition-all group"
+                  className="flex items-center gap-3 px-5 py-3 bg-white/5 hover:text-cyber-blue hover:border-cyber-blue/60 rounded-2xl border-2 border-white/10 text-slate-500 transition-all font-black"
                   title="Export Session"
                 >
-                  <FileText size={18} />
-                  <span className="text-[10px] font-mono font-bold uppercase tracking-widest hidden lg:inline">Export_Session</span>
+                  <FileText size={20} />
+                  <span className="text-[11px] font-mono uppercase tracking-[0.2em] hidden lg:inline">EXPORT_LOG</span>
                 </button>
               </div>
               
               <button 
                 onClick={handleExportPDF} 
-                className="md:hidden p-2.5 bg-white/5 hover:text-[#00E5FF] rounded-xl border border-white/10 text-slate-500"
+                className="md:hidden p-3.5 bg-white/5 hover:text-cyber-blue rounded-2xl border-2 border-white/10 text-slate-500"
                 title="Export Session"
               >
-                <FileDown size={18} />
+                <FileDown size={20} />
               </button>
               
-              <button onClick={() => setSessions(prev => prev.filter(s => s.id !== session.id))} className="p-2.5 hover:text-red-500 rounded-xl text-slate-500 border border-white/10 bg-white/5" title="Delete Session"><Trash2 size={18} /></button>
+              <button onClick={() => setSessions(prev => prev.filter(s => s.id !== session.id))} className="p-3.5 hover:text-red-500 rounded-2xl text-slate-500 border-2 border-white/10 bg-white/5 transition-all hover:bg-red-500/10" title="Delete Session"><Trash2 size={20} /></button>
             </div>
           </div>
 
-          <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 md:px-8 py-8 md:py-12 space-y-8 md:space-y-12 cyber-grid">
+          <div ref={scrollRef} className="flex-1 overflow-y-auto px-5 md:px-12 py-10 md:py-16 space-y-10 md:space-y-16 cyber-grid">
             {session.messages.map((m, idx) => {
               const isLast = idx === session.messages.length - 1;
               const showCursor = isLast && isTyping && m.role === 'assistant';
               
               return (
-                <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
-                  <div className={`max-w-[92%] md:max-w-[85%] rounded-[1.5rem] md:rounded-[2rem] px-6 md:px-10 py-5 md:py-7 relative shadow-xl ${m.role === 'user' ? 'bg-[#39FF14] text-black' : 'bg-white text-black'}`}>
-                    {m.imageUrl && <div className="rounded-xl overflow-hidden mb-4 border border-black/10"><img src={m.imageUrl} alt="Payload" className="w-full object-contain max-h-72" /></div>}
+                <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-4 duration-500`}>
+                  <div className={`max-w-[95%] md:max-w-[85%] rounded-[2rem] md:rounded-[3rem] px-8 md:px-12 py-7 md:py-10 relative shadow-[0_10px_40px_rgba(0,0,0,0.3)] border-2 ${m.role === 'user' ? 'bg-[#39FF14] border-[#39FF14] text-black font-bold' : 'bg-white border-white text-black font-medium'}`}>
+                    {m.imageUrl && <div className="rounded-2xl overflow-hidden mb-6 border-4 border-black/10 shadow-lg"><img src={m.imageUrl} alt="Payload" className="w-full object-contain max-h-[400px]" /></div>}
                     {m.role === 'assistant' && m.thought && <ReasoningSection thought={m.thought} />}
-                    <div className="text-sm md:text-[15px] leading-relaxed whitespace-pre-wrap font-sans font-medium streaming-text">
+                    <div className="text-[15px] md:text-[17px] leading-[1.8] whitespace-pre-wrap font-sans streaming-text drop-shadow-sm">
                       {m.content}
                       {showCursor && <TypingCursor />}
                     </div>
                     {m.role === 'assistant' && !isTyping && m.content.length > 0 && (
-                      <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between opacity-60">
-                         <div className="flex items-center gap-3">
-                          <button onClick={() => speakMessage(m.content)} className="p-2 hover:text-[#00B0FF] transition-colors"><Volume2 size={14} /></button>
-                          <button onClick={() => navigator.clipboard.writeText(m.content)} className="p-2 hover:text-[#00B0FF] transition-colors"><Copy size={14} /></button>
+                      <div className="mt-8 pt-6 border-t-2 border-slate-100 flex items-center justify-between opacity-80">
+                         <div className="flex items-center gap-5">
+                          <button onClick={() => speakMessage(m.content)} className="p-2.5 hover:text-[#00B0FF] hover:scale-125 transition-all" title="Audio Synthesis"><Volume2 size={20} /></button>
+                          <button onClick={() => {navigator.clipboard.writeText(m.content); addNotification("Copied Payload. 📋");}} className="p-2.5 hover:text-[#00B0FF] hover:scale-125 transition-all" title="Copy to Clipboard"><Copy size={20} /></button>
                         </div>
-                        <span className="text-[8px] font-mono tracking-widest text-slate-400 uppercase">SYNTH_READY ✅</span>
+                        <span className="text-[10px] font-mono font-black tracking-[0.2em] text-slate-400 uppercase flex items-center gap-2">
+                          <Check size={14} className="text-[#39FF14]" /> LOGGED_&_READY
+                        </span>
                       </div>
                     )}
-                    {/* Visual Indicator for role */}
-                    <div className={`absolute bottom-[-10px] ${m.role === 'user' ? 'right-4 border-t-[#39FF14]' : 'left-4 border-t-white'} w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px]`}></div>
+                    <div className={`absolute bottom-[-14px] ${m.role === 'user' ? 'right-6 border-t-[#39FF14]' : 'left-6 border-t-white'} w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[14px]`}></div>
                   </div>
                 </div>
               );
             })}
             {isTyping && (session.messages.length === 0 || session.messages[session.messages.length - 1]?.role !== 'assistant' || session.messages[session.messages.length - 1]?.content.length === 0) && (
               <div className="flex justify-start">
-                <div className="bg-white rounded-2xl px-6 py-4 border border-slate-200 flex items-center gap-4 animate-in slide-in-from-left-4 duration-300 shadow-md">
-                  <div className="flex gap-1.5">
-                    <div className="w-2 h-2 bg-[#39FF14] rounded-full animate-bounce [animation-duration:1s]" />
-                    <div className="w-2 h-2 bg-[#39FF14] rounded-full animate-bounce [animation-duration:1s] [animation-delay:0.2s]" />
-                    <div className="w-2 h-2 bg-[#39FF14] rounded-full animate-bounce [animation-duration:1s] [animation-delay:0.4s]" />
+                <div className="bg-white border-4 border-cyber-green rounded-[2rem] px-10 py-6 flex items-center gap-6 animate-in slide-in-from-left-6 duration-500 shadow-2xl">
+                  <div className="flex gap-2">
+                    <div className="w-3 h-3 bg-[#39FF14] rounded-full animate-bounce [animation-duration:0.8s]" />
+                    <div className="w-3 h-3 bg-[#39FF14] rounded-full animate-bounce [animation-duration:0.8s] [animation-delay:0.15s]" />
+                    <div className="w-3 h-3 bg-[#39FF14] rounded-full animate-bounce [animation-duration:0.8s] [animation-delay:0.3s]" />
                   </div>
-                  <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                    <BrainCircuit size={14} className="text-[#39FF14] animate-pulse" /> 
-                    AI_Thinking... 🤖
+                  <span className="text-[12px] font-mono font-black text-slate-900 uppercase tracking-[0.2em] flex items-center gap-3">
+                    <BrainCircuit size={20} className="text-[#39FF14] animate-pulse" /> 
+                    CIPHER_X_PROCESSING... 🤖
                   </span>
                 </div>
               </div>
             )}
           </div>
 
-          <div className="p-4 md:p-10 glass border-t border-white/10 bg-black/90">
-            <form onSubmit={handleSend} className="max-w-5xl mx-auto flex flex-col md:flex-row items-stretch md:items-end gap-3 md:gap-5 relative">
+          <div className="p-6 md:p-12 glass border-t-2 border-white/10 bg-black/95 relative z-40">
+            <form onSubmit={handleSend} className="max-w-6xl mx-auto flex flex-col md:flex-row items-stretch md:items-end gap-5 md:gap-8 relative">
               {activeImage && (
-                <div className="absolute bottom-full left-0 mb-4 p-3 glass rounded-2xl border-[#BC13FE]/60 bg-[#BC13FE]/10 flex items-center gap-4 shadow-xl">
-                  <img src={activeImage} alt="Payload" className="w-12 h-12 rounded-lg object-cover" />
-                  <button onClick={() => setActiveImage(null)} className="p-2 text-red-500 hover:bg-white/10 rounded-xl"><X size={16} /></button>
+                <div className="absolute bottom-full left-0 mb-6 p-4 glass rounded-3xl border-2 border-[#BC13FE] bg-[#BC13FE]/15 flex items-center gap-5 shadow-[0_0_30px_rgba(188,19,254,0.3)] animate-in slide-in-from-bottom-4">
+                  <div className="relative group">
+                    <img src={activeImage} alt="Payload" className="w-16 h-16 rounded-xl object-cover border-2 border-white/20" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl flex items-center justify-center">
+                      <ImagePlus size={20} className="text-white" />
+                    </div>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-mono font-black text-[#BC13FE] uppercase tracking-widest">VISUAL_PAYLOAD_READY</span>
+                    <button onClick={() => setActiveImage(null)} className="flex items-center gap-2 text-[9px] font-mono font-black text-red-500 hover:text-red-400 uppercase mt-1">
+                      <Trash2 size={12} /> REMOVE_ASSET
+                    </button>
+                  </div>
                 </div>
               )}
               
-              <div className="flex items-center gap-2 md:gap-3 order-2 md:order-1">
-                <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 md:flex-none p-4 bg-black border-2 border-[#BC13FE] rounded-xl text-[#BC13FE] shadow-[0_0_15px_rgba(188,19,254,0.2)] hover:bg-[#BC13FE]/5 transition-all">
-                  <ImageIcon size={24} />
+              <div className="flex items-center gap-3 md:gap-4 order-2 md:order-1">
+                <button type="button" onClick={() => fileInputRef.current?.click()} className="flex-1 md:flex-none p-5 bg-black border-4 border-[#BC13FE] rounded-[1.5rem] text-[#BC13FE] shadow-[0_0_20px_rgba(188,19,254,0.3)] hover:bg-[#BC13FE]/10 transition-all hover:scale-105 active:scale-95">
+                  <ImageIcon size={28} />
                 </button>
                 <input type="file" ref={fileInputRef} onChange={(e) => { const file = e.target.files?.[0]; if (file) { const r = new FileReader(); r.onload = (ev) => setActiveImage(ev.target?.result as string); r.readAsDataURL(file); } }} accept="image/*" className="hidden" />
                 
                 <button 
                   type="button" 
                   onClick={toggleListening} 
-                  className={`flex-1 md:flex-none p-4 border-2 rounded-xl transition-all relative group overflow-hidden ${
+                  className={`flex-1 md:flex-none p-5 border-4 rounded-[1.5rem] transition-all relative group overflow-hidden ${
                     isListening 
-                      ? 'bg-red-500/20 text-red-500 border-red-500 animate-pulse shadow-[0_0_25px_rgba(239,68,68,0.4)]' 
-                      : 'bg-black border-[#39FF14] text-[#39FF14] shadow-[0_0_15px_rgba(57,255,20,0.2)] hover:bg-[#39FF14]/5'
+                      ? 'bg-red-500/20 text-red-500 border-red-500 animate-pulse shadow-[0_0_30px_rgba(239,68,68,0.5)]' 
+                      : 'bg-black border-[#39FF14] text-[#39FF14] shadow-[0_0_20px_rgba(57,255,20,0.3)] hover:bg-[#39FF14]/10 hover:scale-105 active:scale-95'
                   }`}
                   title={isListening ? "Stop Listening" : "Voice Input"}
                 >
-                  {isListening ? <Square size={24} /> : <Mic size={24} />}
+                  {isListening ? <Square size={28} /> : <Mic size={28} />}
                 </button>
               </div>
 
               <div className="flex-1 relative order-1 md:order-2">
                 {isListening && (
-                  <div className="absolute -top-10 left-4 flex items-center gap-2 text-[10px] font-mono font-black text-red-500 uppercase tracking-widest animate-pulse">
-                    <div className="w-2 h-2 rounded-full bg-red-500" /> LISTENING... 🎙️
+                  <div className="absolute -top-12 left-6 flex items-center gap-3 text-[11px] font-mono font-black text-red-500 uppercase tracking-[0.3em] animate-pulse">
+                    <div className="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444]" /> UPLINK_VOICE_ACTIVE... 🎙️
                   </div>
                 )}
                 <textarea 
                   value={input} 
                   onChange={(e) => setInput(e.target.value)} 
                   onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }} 
-                  placeholder={isMobile ? "Enter command..." : "Transcribe request... ⌨️"} 
-                  className="w-full bg-white border-2 border-slate-300 rounded-[1.5rem] md:rounded-[2rem] px-5 md:px-10 py-4 md:py-6 pr-16 focus:outline-none focus:border-[#39FF14] text-black font-sans font-medium text-xs md:text-sm transition-all min-h-[56px] max-h-48 resize-none shadow-md" 
+                  placeholder={isMobile ? "ENTER_COMMAND..." : "INPUT_TRANSMISSION_DATA... ⌨️"} 
+                  className="w-full bg-white border-4 border-slate-300 rounded-[2rem] md:rounded-[2.5rem] px-8 md:px-12 py-5 md:py-8 pr-20 md:pr-24 focus:outline-none focus:border-cyber-green text-black font-sans font-black text-sm md:text-lg transition-all min-h-[72px] max-h-64 shadow-[0_10px_30px_rgba(0,0,0,0.15)] placeholder:text-slate-400 placeholder:font-black placeholder:uppercase placeholder:tracking-widest" 
                   rows={1} 
                 />
-                <button type="submit" disabled={(!input.trim() && !activeImage) || isTyping} className="absolute right-3 bottom-2.5 md:right-4 md:bottom-4 p-3.5 md:p-5 rounded-xl disabled:opacity-20 transition-all bg-[#39FF14] text-black glow-green">
-                  <Send size={20} />
+                <button 
+                  type="submit" 
+                  disabled={(!input.trim() && !activeImage) || isTyping} 
+                  className="absolute right-4 bottom-3 md:right-6 md:bottom-5 p-4 md:p-6 rounded-2xl disabled:opacity-20 disabled:grayscale transition-all bg-[#39FF14] text-black shadow-[0_0_20px_#39FF14] hover:scale-110 active:scale-90"
+                >
+                  <Send size={24} strokeWidth={3} />
                 </button>
               </div>
             </form>
+            <div className="max-w-6xl mx-auto mt-6 px-4 flex justify-center">
+               <span className="text-[10px] font-mono font-black text-slate-700 uppercase tracking-[0.4em] select-none">UPLINK_SECURE_&_LOGGED // AES_256_ENCRYPTED</span>
+            </div>
           </div>
         </>
       )}
