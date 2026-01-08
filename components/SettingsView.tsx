@@ -142,13 +142,13 @@ const SettingsView: React.FC<SettingsViewProps> = ({ user, setUser, handleLogout
             </h3>
             <div className="space-y-6">
               <div className="space-y-3">
-                <label className="block text-[11px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1 font-mono">>> CLEARANCE_NAME</label>
+                <label className="block text-[11px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1 font-mono">{" >> "} CLEARANCE_NAME</label>
                 <div className="dark:bg-slate-950 bg-slate-50 px-6 py-4 rounded-2xl border-2 border-white/5 dark:text-slate-200 text-slate-800 text-sm font-black font-mono tracking-tight shadow-inner">
                   {user.name}
                 </div>
               </div>
               <div className="space-y-3">
-                <label className="block text-[11px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1 font-mono">>> UPLINK_ADDRESS</label>
+                <label className="block text-[11px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1 font-mono">{" >> "} UPLINK_ADDRESS</label>
                 <div className="dark:bg-slate-950 bg-slate-50 px-6 py-4 rounded-2xl border-2 border-white/5 dark:text-slate-200 text-slate-800 text-sm font-black font-mono tracking-tight shadow-inner">
                   {user.email}
                 </div>

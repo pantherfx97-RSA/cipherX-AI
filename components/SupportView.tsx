@@ -10,7 +10,6 @@ interface SupportViewProps {
   onBack: () => void;
 }
 
-// Fixed the truncated component and added the missing default export
 const SupportView: React.FC<SupportViewProps> = ({ user, addNotification, onBack }) => {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
@@ -61,7 +60,7 @@ const SupportView: React.FC<SupportViewProps> = ({ user, addNotification, onBack
             <div className="space-y-8 relative z-10">
               <div className="space-y-3">
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono flex items-center gap-2">
-                  <Terminal size={12} className="text-[#00E5FF]" /> >> SUBJECT
+                  <Terminal size={12} className="text-[#00E5FF]" /> {" >> "} SUBJECT
                 </label>
                 <input 
                   type="text"
@@ -74,7 +73,7 @@ const SupportView: React.FC<SupportViewProps> = ({ user, addNotification, onBack
               </div>
               <div className="space-y-3">
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono flex items-center gap-2">
-                  <Terminal size={12} className="text-[#00E5FF]" /> >> MESSAGE
+                  <Terminal size={12} className="text-[#00E5FF]" /> {" >> "} MESSAGE
                 </label>
                 <textarea 
                   value={message}

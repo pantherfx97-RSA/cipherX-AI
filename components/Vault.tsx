@@ -14,7 +14,6 @@ const Vault: React.FC<{ user: User, setUser: (u: User) => void, onBack: () => vo
   const [confirmPin, setConfirmPin] = useState('');
   const [newItem, setNewItem] = useState({ title: '', content: '', type: 'password' as const });
 
-  // If user has no PIN, we need to force setup
   const needsInitialization = !user.vaultPin;
 
   const handleUnlock = () => {
@@ -87,7 +86,6 @@ const Vault: React.FC<{ user: User, setUser: (u: User) => void, onBack: () => vo
     alert("PIN updated successfully. 🛡️");
   };
 
-  // 1. Initialization View (No PIN set yet)
   if (needsInitialization) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-8 bg-black relative overflow-hidden h-full">
@@ -144,7 +142,6 @@ const Vault: React.FC<{ user: User, setUser: (u: User) => void, onBack: () => vo
     );
   }
 
-  // 2. Standard Lock View
   if (isLocked) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center p-8 bg-black relative overflow-hidden h-full">
@@ -182,7 +179,6 @@ const Vault: React.FC<{ user: User, setUser: (u: User) => void, onBack: () => vo
     );
   }
 
-  // 3. Main Vault View (Unlocked)
   return (
     <div className="p-8 max-w-4xl mx-auto h-full overflow-y-auto pb-24 relative">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
@@ -230,7 +226,7 @@ const Vault: React.FC<{ user: User, setUser: (u: User) => void, onBack: () => vo
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">>> LABEL</label>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">{" >> "} LABEL</label>
               <input 
                 value={newItem.title}
                 onChange={e => setNewItem({...newItem, title: e.target.value})}
@@ -240,7 +236,7 @@ const Vault: React.FC<{ user: User, setUser: (u: User) => void, onBack: () => vo
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">>> TYPE</label>
+              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">{" >> "} TYPE</label>
               <select 
                 value={newItem.type}
                 onChange={e => setNewItem({...newItem, type: e.target.value as any})}
@@ -253,7 +249,7 @@ const Vault: React.FC<{ user: User, setUser: (u: User) => void, onBack: () => vo
             </div>
           </div>
           <div className="mb-8 space-y-2">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">>> CONTENT</label>
+            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">{" >> "} CONTENT</label>
             <textarea 
               value={newItem.content}
               onChange={e => setNewItem({...newItem, content: e.target.value})}

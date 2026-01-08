@@ -104,7 +104,11 @@ const Auth: React.FC<AuthProps> = ({ onAuth, onBack }) => {
             onClick={() => setIsLogin(!isLogin)}
             className={`text-[10px] font-mono font-black tracking-[0.3em] uppercase transition-all p-2 rounded-lg border border-transparent hover:border-white/10 text-slate-500 hover:text-[#00E5FF]`}
           >
-            {isLogin ? ">> NEED AN ACCOUNT? SIGN UP" : ">> ALREADY HAVE AN ACCOUNT? LOGIN"}
+            {isLogin ? (
+              <>{" >> "} NEED AN ACCOUNT? SIGN UP</>
+            ) : (
+              <>{" >> "} ALREADY HAVE AN ACCOUNT? LOGIN</>
+            )}
           </button>
         </div>
       </div>

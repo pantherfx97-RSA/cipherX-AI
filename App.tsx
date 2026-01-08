@@ -197,7 +197,7 @@ const App: React.FC = () => {
                   <div className="space-y-6 md:space-y-8">
                     {selectedTask.fields.map(field => (
                       <div key={field.id} className="space-y-3">
-                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">>> {field.label}</label>
+                        <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">{" >> "} {field.label}</label>
                         {field.type === 'text' ? (
                           <input type="text" placeholder={field.placeholder} value={taskData[field.id] || ''} onChange={(e) => setTaskData({...taskData, [field.id]: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:outline-none focus:border-[#00E5FF] transition-all font-mono dark:text-white text-slate-900 placeholder-slate-800" />
                         ) : (
