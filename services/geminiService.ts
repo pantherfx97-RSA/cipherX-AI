@@ -18,11 +18,8 @@ async function decodeAudioData(
   sampleRate: number,
   numChannels: number,
 ): Promise<AudioBuffer> {
-  // To avoid alignment issues with Int16Array (which requires byteOffset to be a multiple of 2),
-  // we slice the buffer to get a copy that starts exactly where the data is.
   const alignedBuffer = data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength);
   const dataInt16 = new Int16Array(alignedBuffer);
-  
   const frameCount = dataInt16.length / numChannels;
   const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
 
@@ -41,26 +38,23 @@ export class GeminiService {
   constructor() {}
 
   async streamChat(modelName: string, prompt: string, history: any[] = []) {
-    // Initializing Gemini client as per coding guidelines
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-    const enhancedInstruction = `${SYSTEM_PROMPT}\n\nCRITICAL_PROTOCOL: Always prepend your response with a detailed step-by-step reasoning path enclosed in <thought> tags. After the closing tag </thought>, provide your final answer. The thought section should break down how you analyzed the user's intent, the data provided, and the logic used for the response.`;
+    const enhancedInstruction = `${SYSTEM_PROMPT}\n\nCRITICAL_PROTOCOL: Always prepend your response with a detailed step-by-step reasoning path enclosed in <thought> tags. After the closing tag </thought>, provide your final answer. Break down analysis clearly.`;
 
-    const responseStream = await ai.models.generateContentStream({
+    return await ai.models.generateContentStream({
       model: modelName,
       contents: [
         ...history,
         { role: 'user', parts: [{ text: prompt }] }
-      ] as any,
+      ],
       config: {
         systemInstruction: enhancedInstruction,
-        temperature: 0.7,
+        temperature: 0.8,
         topP: 0.95,
         topK: 64,
         thinkingConfig: { thinkingBudget: 16000 }
       }
     });
-
-    return responseStream;
   }
 
   async speak(text: string, voiceName: string = 'Kore') {
@@ -73,15 +67,11 @@ export class GeminiService {
     }
 
     try {
-      // Initializing Gemini client as per coding guidelines
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      
       const cleanText = text
         .replace(/<thought>[\s\S]*?<\/thought>/g, '')
         .replace(/[*_#`~:>]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .slice(0, 1000); 
+        .trim();
 
       if (!cleanText) return null;
 
@@ -114,21 +104,20 @@ export class GeminiService {
         source.start(0);
         return source;
       }
-    } catch (error: any) {
-      console.error("Vocal Synthesis Protocol Failure:", error?.message || error);
+    } catch (error) {
+      console.error("Vocal Synthesis Protocol Failure:", error);
     }
     return null;
   }
 
   async analyzeImage(imageData: string, prompt: string) {
-    // Initializing Gemini client as per coding guidelines
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
       contents: {
         parts: [
           { inlineData: { data: imageData, mimeType: 'image/jpeg' } },
-          { text: prompt || "Execute high-resolution inspection of this visual payload." }
+          { text: prompt || "Analyze this visual payload." }
         ]
       },
       config: {
